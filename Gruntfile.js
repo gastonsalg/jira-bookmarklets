@@ -34,7 +34,7 @@ module.exports = function (grunt) {
           'xingJiraApp.versionTimestamp="<%= grunt.template.today("yyyy-mm-dd h:MM:ss TT") %>";' +
           'xingJiraApp.version="<%= pkg.version %>";' +
           'xingJiraApp.showPopup();' +
-          'console.log("jquery", $);}(window.jQuery));'
+          '}(window.jQuery);console.log("jquery", window.jQuery););'
         ;
       },
       addPluginFooter: function (layout) {
