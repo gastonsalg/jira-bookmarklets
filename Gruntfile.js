@@ -34,7 +34,7 @@ module.exports = function (grunt) {
           'xingJiraApp.versionTimestamp="<%= grunt.template.today("yyyy-mm-dd h:MM:ss TT") %>";' +
           'xingJiraApp.version="<%= pkg.version %>";' +
           'xingJiraApp.showPopup();' +
-          '}(jQuery));'
+          '})(jQuery);'
         ;
       },
       addPluginFooter: function (layout) {
@@ -44,7 +44,7 @@ module.exports = function (grunt) {
           'xingJiraApp.versionTimestamp="<%= grunt.template.today("yyyy-mm-dd h:MM:ss TT") %>";' +
           'xingJiraApp.version="<%= pkg.version %>";' +
           'xingJiraApp.cacheTicketHandler();' +
-          '}(jQuery));'
+          '})(jQuery);'
         ;
       }
     }
