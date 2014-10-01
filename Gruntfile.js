@@ -26,7 +26,7 @@ module.exports = function (grunt) {
       delay: 1000
     },
     templates: {
-      banner: function () { return 'javascript:void(function(){'; },
+      banner: function () { return 'javascript:void(function($){'; },
       printPluginFooter: function (layout) {
         var options = layout ? ', { layoutName: ' + layout + ' }' : '';
         return '' +
@@ -34,7 +34,7 @@ module.exports = function (grunt) {
           'xingJiraApp.versionTimestamp="<%= grunt.template.today("yyyy-mm-dd h:MM:ss TT") %>";' +
           'xingJiraApp.version="<%= pkg.version %>";' +
           'xingJiraApp.showPopup();' +
-          '})();'
+          '}(jQuery));'
         ;
       },
       addPluginFooter: function (layout) {
@@ -44,7 +44,7 @@ module.exports = function (grunt) {
           'xingJiraApp.versionTimestamp="<%= grunt.template.today("yyyy-mm-dd h:MM:ss TT") %>";' +
           'xingJiraApp.version="<%= pkg.version %>";' +
           'xingJiraApp.cacheTicketHandler();' +
-          '})();'
+          '}(jQuery));'
         ;
       }
     }
