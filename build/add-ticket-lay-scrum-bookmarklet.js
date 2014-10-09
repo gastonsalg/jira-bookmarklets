@@ -414,17 +414,17 @@ xing.jira.Application = function(cssResources, options) {
         return $el.hasClass("gm-container") && $el || $el.parents(".gm-container");
     };
     scope._clickOutsidePopupHandler = function(event) {
-        var $target = jQuery(event.target), $container = scope._getContainer($target);
+        var $target = $(event.target), $container = scope._getContainer($target);
         if (!$container[0]) {
             scope._hidePopup();
         }
     };
     scope._hidePopup = function() {
-        jQuery("#gm-popup").remove();
-        jQuery(document).off("click", scope._clickOutsidePopupHandler);
+        $("#gm-popup").remove();
+        $(document).off("click", scope._clickOutsidePopupHandler);
     };
     scope._updateHTML = function(cachedTicketMaps) {
-        jQuery("#gm-popup").remove();
+        $("#gm-popup").remove();
         var map = scope.tableMap.build(ticketCache.latest), builderRenderOptions = {
             layoutName: scope.layoutName
         }, currentTicketMarkup = tableBuilder.render(map, builderRenderOptions), cachedTicketsMarkup = "", numberOfTickets = cachedTicketMaps.length + 1, numberOfPages = Math.ceil(numberOfTickets / 2);
@@ -434,14 +434,14 @@ xing.jira.Application = function(cssResources, options) {
                 cachedTicketsMarkup += "" + '<li class="gm-output-item">' + tableBuilder.render(scope.tableMap.build(cachedTicketMap), builderRenderOptions) + markup.ticketPanel(local.modal.action.remove) + "</li>";
             }
         });
-        jQuery("body").append(jQuery('<div id="gm-popup">' + '<section class="gm-container jira-dialog box-shadow">' + markup.dialogHeader(local.modal.heading) + '<div class="jira-dialog-content">' + markup.pageCounter(local.modal.ticketCount, numberOfTickets, local.modal.pageCount, numberOfPages) + markup.ticketPreview(cachedTicketsMarkup, currentTicketMarkup) + "</div>" + markup.dialogFooter(local.modal.select, local.modal.action.print, local.modal.action.cancel) + "</section>" + '<div class="aui-blanket gm-print-hidden"></div>' + "</div>"));
+        $("body").append($('<div id="gm-popup">' + '<section class="gm-container jira-dialog box-shadow">' + markup.dialogHeader(local.modal.heading) + '<div class="jira-dialog-content">' + markup.pageCounter(local.modal.ticketCount, numberOfTickets, local.modal.pageCount, numberOfPages) + markup.ticketPreview(cachedTicketsMarkup, currentTicketMarkup) + "</div>" + markup.dialogFooter(local.modal.select, local.modal.action.print, local.modal.action.cancel) + "</section>" + '<div class="aui-blanket gm-print-hidden"></div>' + "</div>"));
     };
     scope.addStyle = function(resources) {
-        if (jQuery("#gm-style")[0] || !resources) {
+        if ($("#gm-style")[0] || !resources) {
             return;
         }
-        var $style = jQuery('<style id="gm-style" type="text/css"></style>');
-        jQuery(document.head).append($style.html(resources));
+        var $style = $('<style id="gm-style" type="text/css"></style>');
+        $(document.head).append($style.html(resources));
     };
     scope.cacheTicketHandler = function() {
         scope.update();
@@ -451,7 +451,7 @@ xing.jira.Application = function(cssResources, options) {
         scope._showSuccessMessage();
     };
     scope._showSuccessMessage = function() {
-        jQuery(".aui-message").remove();
+        $(".aui-message").remove();
         if (window.AJS) {
             AJS.messages.success(".aui-page-header-inner", {
                 title: local.messages.ticketCached.title,
@@ -459,17 +459,17 @@ xing.jira.Application = function(cssResources, options) {
             });
         }
         setTimeout(function() {
-            jQuery(".aui-message").remove();
+            $(".aui-message").remove();
         }, 5e3);
     };
     scope.showPopup = function() {
-        if (jQuery("#gm-popup")[0]) {
+        if ($("#gm-popup")[0]) {
             return;
         }
         observer.subscribe(this);
         observer.subscribe(ticketCache);
         scope.update(ticketCache.get());
-        jQuery("body").on("click", ".js-gm-print-action", function(event) {
+        $("body").on("click", ".js-gm-print-action", function(event) {
             event.preventDefault();
             window.print();
             ticketCache.remove();
@@ -482,13 +482,13 @@ xing.jira.Application = function(cssResources, options) {
             scope._hidePopup();
         }).on("click", ".js-gm-remove-ticket", function(event) {
             event.preventDefault();
-            var $target = jQuery(event.target).parents("li"), index = $target.index($target);
+            var $target = $(event.target).parents("li"), index = $target.index($target);
             ticketCache.remove(index);
-            jQuery("#gm-popup .form-body table").eq(index).remove();
+            $("#gm-popup .form-body table").eq(index).remove();
             scope.update(ticketCache.get());
         }).on("click", ".gm-change-collaborators", function() {
-            var index = jQuery(".gm-output-list button").index(this) - 1, names, confirmedNames;
-            if (jQuery(this).parents(".is-current")) {
+            var index = $(".gm-output-list button").index(this) - 1, names, confirmedNames;
+            if ($(this).parents(".is-current")) {
                 names = ticketCache.getCollaborators();
             } else {
                 names = ticketCache.getCollaborators(index);
@@ -504,12 +504,12 @@ xing.jira.Application = function(cssResources, options) {
         scope._updateHTML(ticketCache.get());
     };
     scope.collectDataFromDom = function() {
-        var $target = jQuery("#greenhopper-agile-issue-web-panel dd a"), presenter = new nsXC.Presenter(), type = presenter.getString(jQuery("#type-val img").attr("alt"));
+        var $target = $("#greenhopper-agile-issue-web-panel dd a"), presenter = new nsXC.Presenter(), type = presenter.getString($("#type-val img").attr("alt"));
         ticketCache.latest = {
-            number: presenter.getString(jQuery("#key-val").text()),
-            description: presenter.getString(jQuery("#description-val").html()),
-            storyPoints: presenter.getString(jQuery("#customfield_12470-val").text()),
-            dueDate: presenter.getDate(jQuery("#due-date time").attr("datetime")),
+            number: presenter.getString($("#key-val").text()),
+            description: presenter.getString($("#description-val").html()),
+            storyPoints: presenter.getString($("#customfield_12470-val").text()),
+            dueDate: presenter.getDate($("#due-date time").attr("datetime")),
             collaborators: ticketCache.getCollaborators(),
             type: type,
             typeSelector: presenter.dashalizer(type),
@@ -751,4 +751,4 @@ xing.jira.TableMapCell = function() {
             }
         };
     };
-};var xingJiraApp = new xing.jira.Application("", { layoutName: xing.core.table.layout.SCRUM_LAYOUT });xingJiraApp.versionTimestamp="2014-10-09 5:57:42 PM";xingJiraApp.version="2.2.2";xingJiraApp.cacheTicketHandler();})(window.jQuery);
+};var xingJiraApp = new xing.jira.Application("", { layoutName: xing.core.table.layout.SCRUM_LAYOUT });xingJiraApp.versionTimestamp="2014-10-09 6:21:06 PM";xingJiraApp.version="2.2.2";xingJiraApp.cacheTicketHandler();})(jQuery);

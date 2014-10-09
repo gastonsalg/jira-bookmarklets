@@ -414,17 +414,17 @@ xing.jira.Application = function(cssResources, options) {
         return $el.hasClass("gm-container") && $el || $el.parents(".gm-container");
     };
     scope._clickOutsidePopupHandler = function(event) {
-        var $target = jQuery(event.target), $container = scope._getContainer($target);
+        var $target = $(event.target), $container = scope._getContainer($target);
         if (!$container[0]) {
             scope._hidePopup();
         }
     };
     scope._hidePopup = function() {
-        jQuery("#gm-popup").remove();
-        jQuery(document).off("click", scope._clickOutsidePopupHandler);
+        $("#gm-popup").remove();
+        $(document).off("click", scope._clickOutsidePopupHandler);
     };
     scope._updateHTML = function(cachedTicketMaps) {
-        jQuery("#gm-popup").remove();
+        $("#gm-popup").remove();
         var map = scope.tableMap.build(ticketCache.latest), builderRenderOptions = {
             layoutName: scope.layoutName
         }, currentTicketMarkup = tableBuilder.render(map, builderRenderOptions), cachedTicketsMarkup = "", numberOfTickets = cachedTicketMaps.length + 1, numberOfPages = Math.ceil(numberOfTickets / 2);
@@ -434,14 +434,14 @@ xing.jira.Application = function(cssResources, options) {
                 cachedTicketsMarkup += "" + '<li class="gm-output-item">' + tableBuilder.render(scope.tableMap.build(cachedTicketMap), builderRenderOptions) + markup.ticketPanel(local.modal.action.remove) + "</li>";
             }
         });
-        jQuery("body").append(jQuery('<div id="gm-popup">' + '<section class="gm-container jira-dialog box-shadow">' + markup.dialogHeader(local.modal.heading) + '<div class="jira-dialog-content">' + markup.pageCounter(local.modal.ticketCount, numberOfTickets, local.modal.pageCount, numberOfPages) + markup.ticketPreview(cachedTicketsMarkup, currentTicketMarkup) + "</div>" + markup.dialogFooter(local.modal.select, local.modal.action.print, local.modal.action.cancel) + "</section>" + '<div class="aui-blanket gm-print-hidden"></div>' + "</div>"));
+        $("body").append($('<div id="gm-popup">' + '<section class="gm-container jira-dialog box-shadow">' + markup.dialogHeader(local.modal.heading) + '<div class="jira-dialog-content">' + markup.pageCounter(local.modal.ticketCount, numberOfTickets, local.modal.pageCount, numberOfPages) + markup.ticketPreview(cachedTicketsMarkup, currentTicketMarkup) + "</div>" + markup.dialogFooter(local.modal.select, local.modal.action.print, local.modal.action.cancel) + "</section>" + '<div class="aui-blanket gm-print-hidden"></div>' + "</div>"));
     };
     scope.addStyle = function(resources) {
-        if (jQuery("#gm-style")[0] || !resources) {
+        if ($("#gm-style")[0] || !resources) {
             return;
         }
-        var $style = jQuery('<style id="gm-style" type="text/css"></style>');
-        jQuery(document.head).append($style.html(resources));
+        var $style = $('<style id="gm-style" type="text/css"></style>');
+        $(document.head).append($style.html(resources));
     };
     scope.cacheTicketHandler = function() {
         scope.update();
@@ -451,7 +451,7 @@ xing.jira.Application = function(cssResources, options) {
         scope._showSuccessMessage();
     };
     scope._showSuccessMessage = function() {
-        jQuery(".aui-message").remove();
+        $(".aui-message").remove();
         if (window.AJS) {
             AJS.messages.success(".aui-page-header-inner", {
                 title: local.messages.ticketCached.title,
@@ -459,17 +459,17 @@ xing.jira.Application = function(cssResources, options) {
             });
         }
         setTimeout(function() {
-            jQuery(".aui-message").remove();
+            $(".aui-message").remove();
         }, 5e3);
     };
     scope.showPopup = function() {
-        if (jQuery("#gm-popup")[0]) {
+        if ($("#gm-popup")[0]) {
             return;
         }
         observer.subscribe(this);
         observer.subscribe(ticketCache);
         scope.update(ticketCache.get());
-        jQuery("body").on("click", ".js-gm-print-action", function(event) {
+        $("body").on("click", ".js-gm-print-action", function(event) {
             event.preventDefault();
             window.print();
             ticketCache.remove();
@@ -482,13 +482,13 @@ xing.jira.Application = function(cssResources, options) {
             scope._hidePopup();
         }).on("click", ".js-gm-remove-ticket", function(event) {
             event.preventDefault();
-            var $target = jQuery(event.target).parents("li"), index = $target.index($target);
+            var $target = $(event.target).parents("li"), index = $target.index($target);
             ticketCache.remove(index);
-            jQuery("#gm-popup .form-body table").eq(index).remove();
+            $("#gm-popup .form-body table").eq(index).remove();
             scope.update(ticketCache.get());
         }).on("click", ".gm-change-collaborators", function() {
-            var index = jQuery(".gm-output-list button").index(this) - 1, names, confirmedNames;
-            if (jQuery(this).parents(".is-current")) {
+            var index = $(".gm-output-list button").index(this) - 1, names, confirmedNames;
+            if ($(this).parents(".is-current")) {
                 names = ticketCache.getCollaborators();
             } else {
                 names = ticketCache.getCollaborators(index);
@@ -504,12 +504,12 @@ xing.jira.Application = function(cssResources, options) {
         scope._updateHTML(ticketCache.get());
     };
     scope.collectDataFromDom = function() {
-        var $target = jQuery("#greenhopper-agile-issue-web-panel dd a"), presenter = new nsXC.Presenter(), type = presenter.getString(jQuery("#type-val img").attr("alt"));
+        var $target = $("#greenhopper-agile-issue-web-panel dd a"), presenter = new nsXC.Presenter(), type = presenter.getString($("#type-val img").attr("alt"));
         ticketCache.latest = {
-            number: presenter.getString(jQuery("#key-val").text()),
-            description: presenter.getString(jQuery("#description-val").html()),
-            storyPoints: presenter.getString(jQuery("#customfield_12470-val").text()),
-            dueDate: presenter.getDate(jQuery("#due-date time").attr("datetime")),
+            number: presenter.getString($("#key-val").text()),
+            description: presenter.getString($("#description-val").html()),
+            storyPoints: presenter.getString($("#customfield_12470-val").text()),
+            dueDate: presenter.getDate($("#due-date time").attr("datetime")),
             collaborators: ticketCache.getCollaborators(),
             type: type,
             typeSelector: presenter.dashalizer(type),
@@ -751,4 +751,4 @@ xing.jira.TableMapCell = function() {
             }
         };
     };
-};var xingJiraApp = new xing.jira.Application('.gm-jira-number,.gm-jira-title .gm-bd,.gm-scrum-layout .gm-jira-description .gm-bd{text-align:left}.gm-jira-story{text-align:center}.gm-jira-pairing .gm-hd,.gm-jira-story .gm-hd{float:left}.gm-jira-story .gm-bd,.gm-change-collaborators{float:right}.gm-jira-title .gm-bd,.gm-scrum-layout .gm-jira-description .gm-bd{-o-hyphens:auto;-ms-hyphens:auto;-moz-hyphens:auto;-webkit-hyphens:auto;hyphens:auto}.gm-scrum-layout .gm-jira-description .gm-bd{font-size:1rem}.gm-jira-number .gm-bd,.gm-jira-story .gm-bd{font-size:2.1rem}.gm-jira-title .gm-bd{font-size:1.8rem}@media print{.gm-print-hidden{display:none}}.gm-table,.gm-table th,.gm-table td{border:1px solid #ccc}.gm-table{border-collapse:collapse;font:8.5pt helvetica,arial,sans-serif;line-height:1.3334em;padding-bottom:2mm;width:100%}.gm-table td{vertical-align:top}.gm-hd{color:#707070;text-align:left;text-transform:uppercase}.gm-page-counter{font-size:0.8rem;color:#707070;position:absolute;right:0.5rem;top:22px}.gm-output-item:nth-child(odd):before,.gm-output-item:nth-child(even):after{color:#ccc;display:block;font-size:0.8rem;padding:0.2rem 0;text-align:center}.gm-output-list{counter-reset:page-counter;margin:0;padding:0}.gm-output-item{-o-box-sizing:border-box;-ms-box-sizing:border-box;-moz-box-sizing:border-box;-webkit-box-sizing:border-box;box-sizing:border-box;overflow:hidden;page-break-inside:avoid;position:relative}.gm-output-item:nth-child(odd){margin-bottom:0.4rem;counter-increment:page-counter}.gm-output-item:nth-child(odd):before{content:"Begin of page " counter(page-counter)}.gm-output-item:nth-child(even):after{border-bottom:2px dashed #ccc;content:"End of page " counter(page-counter)}.gm-inner{padding:2mm 3mm}.gm-jira-number{min-width:30%}.gm-jira-number .gm-bd{word-break:break-all}.gm-jira-title .gm-bd{line-height:1em}.gm-jira-title .gm-inner{height:7cm;overflow:hidden;padding-bottom:0}.gm-jira-pairing .gm-inner{overflow:hidden}.gm-jira-pairing .gm-hd{padding-right:3mm}.gm-jira-pairing .gm-bd{overflow:hidden}.gm-jira-story .gm-bd{display:inline-block;font-weight:bold;line-height:1em}.gm-jira-qa .gm-bd{border-radius:2rem;border:1px solid #ccc;height:40px;margin:auto;width:40px}.gm-date-content{width:20%}.gm-date-content .gm-hd{padding:0 0 1px;text-align:center}.gm-date-content .gm-bd{color:#ccc;text-align:center;text-transform:uppercase}.gm-date-content .gm-inner{min-height:1.2cm}.gm-scrum-layout .gm-jira-title .gm-inner{height:1.8cm}.gm-scrum-layout .gm-jira-description{overflow:hidden}.gm-scrum-layout .gm-jira-description .gm-inner{height:7.6cm}.gm-scrum-layout .gm-jira-description .gm-bd{font-weight:normal;line-height:1.3334em}.global .aui-message{left:50%;margin-left:-220px;position:absolute;top:20px;z-index:101}@media print{.gm-output-item{height:12.2cm}.gm-output-item:nth-child(even){border-bottom:none}.gm-output-item:before,.gm-output-item:after{display:none !important}html,body{background-color:white}#page{display:none}.gm-container{border-radius:0 !important;box-shadow:none !important;left:0;margin:0;max-height:none;padding:0;position:absolute;top:0;width:100%}.gm-container.jira-dialog{border:none;margin:0;padding:0}.gm-container .form-body{padding:0 !important}}@media screen{.gm-ticket-action-panel{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;align-items:right;background-color:#f5f5f5;border-top:1px solid #ccc;bottom:1px;justify-content:center;left:1px;opacity:0;padding:0.4rem 0;position:absolute;right:1px;text-align:center}.gm-output-item:hover .gm-ticket-action-panel{opacity:1}.gm-output-item:nth-child(even) .gm-ticket-action-panel{bottom:1.7rem}.gm-output-item:not(.is-current){color:#707070}.gm-container{left:50%;margin-left:-9cm;margin-top:5%;top:0;width:18.9cm}.gm-container .form-body{height:460px;padding:2mm !important}}');xingJiraApp.versionTimestamp="2014-10-09 5:57:42 PM";xingJiraApp.version="2.2.2";xingJiraApp.showPopup();})(window.jQuery);console.log("jquery", window.jQuery);
+};var xingJiraApp = new xing.jira.Application('.gm-jira-number,.gm-jira-title .gm-bd,.gm-scrum-layout .gm-jira-description .gm-bd{text-align:left}.gm-jira-story{text-align:center}.gm-jira-pairing .gm-hd,.gm-jira-story .gm-hd{float:left}.gm-jira-story .gm-bd,.gm-change-collaborators{float:right}.gm-jira-title .gm-bd,.gm-scrum-layout .gm-jira-description .gm-bd{-o-hyphens:auto;-ms-hyphens:auto;-moz-hyphens:auto;-webkit-hyphens:auto;hyphens:auto}.gm-scrum-layout .gm-jira-description .gm-bd{font-size:1rem}.gm-jira-number .gm-bd,.gm-jira-story .gm-bd{font-size:2.1rem}.gm-jira-title .gm-bd{font-size:1.8rem}@media print{.gm-print-hidden{display:none}}.gm-table,.gm-table th,.gm-table td{border:1px solid #ccc}.gm-table{border-collapse:collapse;font:8.5pt helvetica,arial,sans-serif;line-height:1.3334em;padding-bottom:2mm;width:100%}.gm-table td{vertical-align:top}.gm-hd{color:#707070;text-align:left;text-transform:uppercase}.gm-page-counter{font-size:0.8rem;color:#707070;position:absolute;right:0.5rem;top:22px}.gm-output-item:nth-child(odd):before,.gm-output-item:nth-child(even):after{color:#ccc;display:block;font-size:0.8rem;padding:0.2rem 0;text-align:center}.gm-output-list{counter-reset:page-counter;margin:0;padding:0}.gm-output-item{-o-box-sizing:border-box;-ms-box-sizing:border-box;-moz-box-sizing:border-box;-webkit-box-sizing:border-box;box-sizing:border-box;overflow:hidden;page-break-inside:avoid;position:relative}.gm-output-item:nth-child(odd){margin-bottom:0.4rem;counter-increment:page-counter}.gm-output-item:nth-child(odd):before{content:"Begin of page " counter(page-counter)}.gm-output-item:nth-child(even):after{border-bottom:2px dashed #ccc;content:"End of page " counter(page-counter)}.gm-inner{padding:2mm 3mm}.gm-jira-number{min-width:30%}.gm-jira-number .gm-bd{word-break:break-all}.gm-jira-title .gm-bd{line-height:1em}.gm-jira-title .gm-inner{height:7cm;overflow:hidden;padding-bottom:0}.gm-jira-pairing .gm-inner{overflow:hidden}.gm-jira-pairing .gm-hd{padding-right:3mm}.gm-jira-pairing .gm-bd{overflow:hidden}.gm-jira-story .gm-bd{display:inline-block;font-weight:bold;line-height:1em}.gm-jira-qa .gm-bd{border-radius:2rem;border:1px solid #ccc;height:40px;margin:auto;width:40px}.gm-date-content{width:20%}.gm-date-content .gm-hd{padding:0 0 1px;text-align:center}.gm-date-content .gm-bd{color:#ccc;text-align:center;text-transform:uppercase}.gm-date-content .gm-inner{min-height:1.2cm}.gm-scrum-layout .gm-jira-title .gm-inner{height:1.8cm}.gm-scrum-layout .gm-jira-description{overflow:hidden}.gm-scrum-layout .gm-jira-description .gm-inner{height:7.6cm}.gm-scrum-layout .gm-jira-description .gm-bd{font-weight:normal;line-height:1.3334em}.global .aui-message{left:50%;margin-left:-220px;position:absolute;top:20px;z-index:101}@media print{.gm-output-item{height:12.2cm}.gm-output-item:nth-child(even){border-bottom:none}.gm-output-item:before,.gm-output-item:after{display:none !important}html,body{background-color:white}#page{display:none}.gm-container{border-radius:0 !important;box-shadow:none !important;left:0;margin:0;max-height:none;padding:0;position:absolute;top:0;width:100%}.gm-container.jira-dialog{border:none;margin:0;padding:0}.gm-container .form-body{padding:0 !important}}@media screen{.gm-ticket-action-panel{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;align-items:right;background-color:#f5f5f5;border-top:1px solid #ccc;bottom:1px;justify-content:center;left:1px;opacity:0;padding:0.4rem 0;position:absolute;right:1px;text-align:center}.gm-output-item:hover .gm-ticket-action-panel{opacity:1}.gm-output-item:nth-child(even) .gm-ticket-action-panel{bottom:1.7rem}.gm-output-item:not(.is-current){color:#707070}.gm-container{left:50%;margin-left:-9cm;margin-top:5%;top:0;width:18.9cm}.gm-container .form-body{height:460px;padding:2mm !important}}');xingJiraApp.versionTimestamp="2014-10-09 6:21:06 PM";xingJiraApp.version="2.2.2";xingJiraApp.showPopup();})(jQuery);
