@@ -1,4 +1,4 @@
-javascript:void(function($){var Namespace = function(global) {
+(function($){var Namespace = function(global) {
     "use strict";
     return {
         create: function(namespace) {
@@ -751,4 +751,4 @@ xing.jira.TableMapCell = function() {
             }
         };
     };
-};var xingJiraApp = new xing.jira.Application("");xingJiraApp.versionTimestamp="2014-10-09 6:21:06 PM";xingJiraApp.version="2.2.2";xingJiraApp.cacheTicketHandler();})(jQuery);
+};var xingJiraApp = new xing.jira.Application();xingJiraApp.versionTimestamp="2014-10-09 6:25:35 PM";xingJiraApp.version="2.2.2";xingJiraApp.cacheTicketHandler();}(jQuery));
