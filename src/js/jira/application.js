@@ -250,9 +250,9 @@ xing.jira.Application = function (cssResources, options) {
       collaborators: ticketCache.getCollaborators(),
       type:          type,
       typeSelector:  presenter.dashalizer(type),
-      reporter:      presenter.getString(jQuery('#reporter-val span').text()),
-      created:       presenter.getDate(jQuery('#summary-val').text()),
-      component:     presenter.getString(jQuery('#components-field').text()),
+      reporter:      presenter.getString($('#reporter-val span').text()),
+      created:       presenter.getDate($('#summary-val').text()),
+      component:     presenter.getString($('#components-field').text()),
       target:        presenter.getElementText($target)
     };
     observer.update();

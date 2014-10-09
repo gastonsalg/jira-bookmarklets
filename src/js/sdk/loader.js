@@ -12,7 +12,7 @@
   options = options || {};
   options.kit = options.kit || 0;
   options.env = options.env || 0;
-  options.path = options.path || '//rawgit.com/cange/jira-bookmarklets/';
+  options.path = options.path || '//cdn.rawgit.com/gastonsalg/jira-bookmarklets/';
 
   var doc = document,
     scriptTag = doc.createElement('script'),
