@@ -1,43 +1,43 @@
-javascript:void(function($){var Namespace = function(a) {
+javascript:void(function($){var Namespace = function(global) {
     "use strict";
     return {
-        create: function(b) {
-            var c = a, d = b.split("."), e = d.length, f = 0, g;
-            for (;f < e; f++) {
-                g = d[f];
-                c = c[g] = c[g] || {};
+        create: function(namespace) {
+            var parent = global, parts = namespace.split("."), len = parts.length, i = 0, part;
+            for (;i < len; i++) {
+                part = parts[i];
+                parent = parent[part] = parent[part] || {};
             }
         },
-        is: function(b, c) {
-            var d = a, e = false, f = 0, g, h, i;
-            if (typeof b === "object") {
-                d = b;
+        is: function(namespaceOrParent, namespace) {
+            var parent = global, result = false, i = 0, len, parts, part;
+            if (typeof namespaceOrParent === "object") {
+                parent = namespaceOrParent;
             } else {
-                c = b;
+                namespace = namespaceOrParent;
             }
-            h = c.split(".");
-            g = h.length;
-            for (;f < g; f++) {
-                i = h[f];
-                if (!d[i]) {
-                    e = false;
+            parts = namespace.split(".");
+            len = parts.length;
+            for (;i < len; i++) {
+                part = parts[i];
+                if (!parent[part]) {
+                    result = false;
                     return false;
                 }
-                d = d[i];
-                e = true;
+                parent = parent[part];
+                result = true;
             }
-            return e;
+            return result;
         }
     };
 }(this);
 
-String.prototype.truncate = function(a) {
+String.prototype.truncate = function(maxlength) {
     "use strict";
-    var b = this.length, c = "…", d = c.length, e = this;
-    if (b > a) {
-        e = this.substr(0, a - d) + c;
+    var length = this.length, suffix = "…", suffixLength = suffix.length, result = this;
+    if (length > maxlength) {
+        result = this.substr(0, maxlength - suffixLength) + suffix;
     }
-    return e;
+    return result;
 };
 
 String.prototype.trimWhitespace = function() {
@@ -45,22 +45,22 @@ String.prototype.trimWhitespace = function() {
     return this.replace(/\s+/g, " ").split(/\n/).join(" ");
 };
 
-String.prototype.toArray = function(a) {
+String.prototype.toArray = function(seperator) {
     "use strict";
-    a = new RegExp(a || ",");
-    return this.split(a);
+    seperator = new RegExp(seperator || ",");
+    return this.split(seperator);
 };
 
 Namespace.create("xing.core.helpers");
 
-xing.core.helpers.isArray = function(a) {
+xing.core.helpers.isArray = function(obj) {
     "use strict";
-    return Object.prototype.toString.call(a) === "[object Array]";
+    return Object.prototype.toString.call(obj) === "[object Array]";
 };
 
-xing.core.helpers.isObject = function(a) {
+xing.core.helpers.isObject = function(obj) {
     "use strict";
-    return Object.prototype.toString.call(a) === "[object Object]";
+    return Object.prototype.toString.call(obj) === "[object Object]";
 };
 
 Namespace.create("xing.core");
@@ -126,8 +126,8 @@ xing.core.I18n = function() {
             }
         }
     };
-    this.local = function(a) {
-        return this[a || "en"];
+    this.local = function(lang) {
+        return this[lang || "en"];
     };
 };
 
@@ -135,21 +135,21 @@ Namespace.create("xing.core");
 
 xing.core.Markup = function() {
     "use strict";
-    var a = this;
-    a.ticketPanel = function(a) {
-        return "" + '<div class="gm-ticket-action-panel gm-print-hidden">' + '<button type="button" class="aui-button js-gm-remove-ticket">' + '<i class="aui-icon aui-icon-small aui-iconfont-remove"></i>' + a + "</button>" + "</div>";
+    var scope = this;
+    scope.ticketPanel = function(label) {
+        return "" + '<div class="gm-ticket-action-panel gm-print-hidden">' + '<button type="button" class="aui-button js-gm-remove-ticket">' + '<i class="aui-icon aui-icon-small aui-iconfont-remove"></i>' + label + "</button>" + "</div>";
     };
-    a.dialogHeader = function(a) {
-        return "" + '<header class="jira-dialog-heading gm-print-hidden">' + "<h2>" + a + "</h2>" + "</header>";
+    scope.dialogHeader = function(label) {
+        return "" + '<header class="jira-dialog-heading gm-print-hidden">' + "<h2>" + label + "</h2>" + "</header>";
     };
-    a.dialogFooter = function(a, b, c) {
-        return "" + '<footer class="buttons-container form-footer gm-print-hidden">' + '<div class="buttons">' + '<label for="gm-select-ticket">' + a + "</label>&nbsp;" + '<button id="gm-select-ticket" class="js-gm-pick-more aui-button" title="' + a + '">' + '<i class="aui-icon aui-icon-small aui-iconfont-add"></i>' + "</button>" + '<button class="js-gm-print-action aui-button aui-button-primary">' + b + "</button>" + '<a class="js-gm-cancel-action aui-button aui-button-link" href="#">' + c + "</a>" + "</div>" + "</footer>";
+    scope.dialogFooter = function(selectLabel, printLabel, cancelLabel) {
+        return "" + '<footer class="buttons-container form-footer gm-print-hidden">' + '<div class="buttons">' + '<label for="gm-select-ticket">' + selectLabel + "</label>&nbsp;" + '<button id="gm-select-ticket" class="js-gm-pick-more aui-button" title="' + selectLabel + '">' + '<i class="aui-icon aui-icon-small aui-iconfont-add"></i>' + "</button>" + '<button class="js-gm-print-action aui-button aui-button-primary">' + printLabel + "</button>" + '<a class="js-gm-cancel-action aui-button aui-button-link" href="#">' + cancelLabel + "</a>" + "</div>" + "</footer>";
     };
-    a.pageCounter = function(a, b, c, d) {
-        return "" + '<div class="gm-page-counter gm-print-hidden">' + a + ' <span class="aui-badge">' + b + "</span>" + c + ' <span class="aui-badge">' + d + "</span>" + "</div>";
+    scope.pageCounter = function(ticketText, ticketCount, pageText, pageCount) {
+        return "" + '<div class="gm-page-counter gm-print-hidden">' + ticketText + ' <span class="aui-badge">' + ticketCount + "</span>" + pageText + ' <span class="aui-badge">' + pageCount + "</span>" + "</div>";
     };
-    a.ticketPreview = function(a, b) {
-        return "" + '<div class="form-body">' + '<ul class="gm-output-list">' + '<li class="gm-output-item is-current">' + b + "</li>" + a + "</ul>" + "</div>";
+    scope.ticketPreview = function(cachedTicketsMarkup, currentTicketMarkup) {
+        return "" + '<div class="form-body">' + '<ul class="gm-output-list">' + '<li class="gm-output-item is-current">' + currentTicketMarkup + "</li>" + cachedTicketsMarkup + "</ul>" + "</div>";
     };
 };
 
@@ -157,20 +157,20 @@ Namespace.create("xing.core");
 
 xing.core.Observer = function() {
     "use strict";
-    var a = this;
-    a._observers = [];
-    a.subscribe = function(b) {
-        a._observers.push(b);
+    var scope = this;
+    scope._observers = [];
+    scope.subscribe = function(subscriber) {
+        scope._observers.push(subscriber);
     };
-    a.unsubscribe = function(b) {
-        var c = a.observer.indexOf(b);
-        if (c >= 0) {
-            a._observers.splice(c);
+    scope.unsubscribe = function(subscriber) {
+        var index = scope.observer.indexOf(subscriber);
+        if (index >= 0) {
+            scope._observers.splice(index);
         }
     };
-    a.update = function() {
-        a._observers.forEach(function(a) {
-            a.update();
+    scope.update = function() {
+        scope._observers.forEach(function(observer) {
+            observer.update();
         });
     };
 };
@@ -179,31 +179,31 @@ Namespace.create("xing.core");
 
 xing.core.Presenter = function() {
     "use strict";
-    var a = this;
-    a.dashalizer = function(a) {
-        return a.toLowerCase().replace(/ /g, "-");
+    var scope = this;
+    scope.dashalizer = function(string) {
+        return string.toLowerCase().replace(/ /g, "-");
     };
-    a.getString = function(a) {
-        return (a || "").trimWhitespace();
+    scope.getString = function(string) {
+        return (string || "").trimWhitespace();
     };
-    a.getDate = function(a) {
-        var b = "", c, d, e, f;
-        if (a) {
-            c = new Date(a);
-            d = c.getMonth() + 1;
-            d = d > 9 ? d : "0" + d;
-            e = c.getFullYear();
-            f = c.getDate();
-            b = e + "-" + d + "-" + f;
+    scope.getDate = function(timestamp) {
+        var formattedDate = "", date, m, Y, d;
+        if (timestamp) {
+            date = new Date(timestamp);
+            m = date.getMonth() + 1;
+            m = m > 9 ? m : "0" + m;
+            Y = date.getFullYear();
+            d = date.getDate();
+            formattedDate = Y + "-" + m + "-" + d;
         }
-        return b;
+        return formattedDate;
     };
-    a.getStorageItem = function(a) {
-        var b = localStorage.getItem(a) || "";
-        return b.toArray();
+    scope.getStorageItem = function(key) {
+        var item = localStorage.getItem(key) || "";
+        return item.toArray();
     };
-    a.getElementText = function(a) {
-        return a[0] ? a.text().trimWhitespace() : "";
+    scope.getElementText = function($el) {
+        return $el[0] ? $el.text().trimWhitespace() : "";
     };
 };
 
@@ -211,61 +211,61 @@ Namespace.create("xing.core.table");
 
 xing.core.table.Builder = function() {
     "use strict";
-    var a = this;
-    a._text = function(a) {
-        return "text" in a ? a.text : "";
+    var scope = this;
+    scope._text = function(tag) {
+        return "text" in tag ? tag.text : "";
     };
-    a._addCssClass = function(a, b) {
-        b = " " + (b || "");
-        var c = a["options"] || {}, d = "cssClass" in c ? c.cssClass : "", e = "", f;
-        jQuery.extend(c, {
-            cssClass: d + b
+    scope._addCssClass = function(tag, additionalClass) {
+        additionalClass = " " + (additionalClass || "");
+        var options = tag["options"] || {}, cssClass = "cssClass" in options ? options.cssClass : "", attrs = "", option;
+        jQuery.extend(options, {
+            cssClass: cssClass + additionalClass
         });
-        if (c.cssClass === " ") {
-            delete c.cssClass;
+        if (options.cssClass === " ") {
+            delete options.cssClass;
         }
-        for (f in c) {
-            var g = f === "cssClass" ? "class" : f, h = c[f] || "";
-            g = g.replace(/([a-z])([A-Z])/g, "$1-$2").toLowerCase();
-            e += " " + g + '="' + h + '"';
+        for (option in options) {
+            var attr = option === "cssClass" ? "class" : option, value = options[option] || "";
+            attr = attr.replace(/([a-z])([A-Z])/g, "$1-$2").toLowerCase();
+            attrs += " " + attr + '="' + value + '"';
         }
-        return e;
+        return attrs;
     };
-    a.row = function(b) {
-        var c = "";
-        b.forEach(function(b) {
-            c += a.cell(b);
+    scope.row = function(rowData) {
+        var result = "";
+        rowData.forEach(function(cellData) {
+            result += scope.cell(cellData);
         });
-        return "<tr>" + c + "</tr>";
+        return "<tr>" + result + "</tr>";
     };
-    a.cell = function(b) {
-        var c = b.cell, d = "", e = b.head ? "th" : "td";
-        d += a._cellTitle(c);
-        d += a._cellBody(c);
-        return "" + "<" + e + a._addCssClass(c) + ">" + '<div class="gm-inner">' + d + "</div>" + "</" + e + ">";
+    scope.cell = function(cellData) {
+        var cell = cellData.cell, result = "", tag = cellData.head ? "th" : "td";
+        result += scope._cellTitle(cell);
+        result += scope._cellBody(cell);
+        return "" + "<" + tag + scope._addCssClass(cell) + ">" + '<div class="gm-inner">' + result + "</div>" + "</" + tag + ">";
     };
-    a._cellBody = function(b) {
-        var c = "";
-        if ("body" in b) {
-            var d = b.body;
-            c = "<div" + a._addCssClass(d, "gm-bd") + ">" + a._text(d) + "</div>";
+    scope._cellBody = function(cell) {
+        var result = "";
+        if ("body" in cell) {
+            var body = cell.body;
+            result = "<div" + scope._addCssClass(body, "gm-bd") + ">" + scope._text(body) + "</div>";
         }
-        return c;
+        return result;
     };
-    a._cellTitle = function(b) {
-        var c = "";
-        if (b.title) {
-            var d = b.title;
-            c = "<div" + a._addCssClass(d, "gm-hd") + ">" + a._text(d) + "</div>";
+    scope._cellTitle = function(cell) {
+        var result = "";
+        if (cell.title) {
+            var title = cell.title;
+            result = "<div" + scope._addCssClass(title, "gm-hd") + ">" + scope._text(title) + "</div>";
         }
-        return c;
+        return result;
     };
-    a.render = function(b, c) {
-        var d = "", e = c && c.layoutName ? " gm-" + c.layoutName + "-layout" : "";
-        b.forEach(function(b) {
-            d += a.row(b);
+    scope.render = function(tableData, options) {
+        var result = "", cssClass = options && options.layoutName ? " gm-" + options.layoutName + "-layout" : "";
+        tableData.forEach(function(rowData) {
+            result += scope.row(rowData);
         });
-        return '<table class="gm-table' + e + '">' + d + "</table>";
+        return '<table class="gm-table' + cssClass + '">' + result + "</table>";
     };
 };
 
@@ -286,45 +286,45 @@ xing.core.table.layout = {
             }
         } ], [ "description" ] ]
     },
-    get: function(a) {
+    get: function(layoutName) {
         "use strict";
-        var b = this._layouts[a];
-        return b;
+        var result = this._layouts[layoutName];
+        return result;
     }
 };
 
-xing.core.table.Map = function(a, b, c) {
+xing.core.table.Map = function(tableCell, local, layoutName) {
     "use strict";
-    var d = this, e = xing.core.table.layout;
-    c = c || e.DEFAULT_LAYOUT;
-    d._mapSwitch = function(c, e) {
-        var f;
-        if (typeof e === "string") {
-            f = a[e]({
-                data: c,
-                local: b.ticket
+    var scope = this, layout = xing.core.table.layout;
+    layoutName = layoutName || layout.DEFAULT_LAYOUT;
+    scope._mapSwitch = function(data, mapItem) {
+        var result;
+        if (typeof mapItem === "string") {
+            result = tableCell[mapItem]({
+                data: data,
+                local: local.ticket
             });
-        } else if (xing.core.helpers.isObject(e)) {
-            var g = Object.keys(e)[0];
-            if (e[g].maxLength) {
-                c[g] = c[g].truncate(e[g].maxLength);
+        } else if (xing.core.helpers.isObject(mapItem)) {
+            var mapItemName = Object.keys(mapItem)[0];
+            if (mapItem[mapItemName].maxLength) {
+                data[mapItemName] = data[mapItemName].truncate(mapItem[mapItemName].maxLength);
             }
-            f = a[g]({
-                data: c,
-                local: b.ticket
+            result = tableCell[mapItemName]({
+                data: data,
+                local: local.ticket
             });
         } else {
-            f = d.build(c, e);
+            result = scope.build(data, mapItem);
         }
-        return f;
+        return result;
     };
-    d.build = function(a, b) {
-        b = b || e.get(c);
-        var f = [], g = 0, h = b.length;
-        for (;g < h; g++) {
-            f[g] = d._mapSwitch(a, b[g]);
+    scope.build = function(data, map) {
+        map = map || layout.get(layoutName);
+        var cellMap = [], index = 0, length = map.length;
+        for (;index < length; index++) {
+            cellMap[index] = scope._mapSwitch(data, map[index]);
         }
-        return f;
+        return cellMap;
     };
 };
 
@@ -332,233 +332,233 @@ Namespace.create("xing.core");
 
 xing.core.TicketCache = function() {
     "use strict";
-    var a = this, b = location.hostname, c = b ? "." : "local.";
-    a.STORAGE_KEY = b + c + "ticket";
-    a.DEFAULT_COLLABORATOR_KEY = b + c + "default_collaborators";
-    a.default = {
-        collaborators: localStorage.getItem(a.DEFAULT_COLLABORATOR_KEY) || ""
+    var scope = this, hostname = location.hostname, separator = hostname ? "." : "local.";
+    scope.STORAGE_KEY = hostname + separator + "ticket";
+    scope.DEFAULT_COLLABORATOR_KEY = hostname + separator + "default_collaborators";
+    scope.default = {
+        collaborators: localStorage.getItem(scope.DEFAULT_COLLABORATOR_KEY) || ""
     };
-    a.data = {};
-    a.latest = {};
-    a.update = function() {
-        a.data = jQuery.extend(a.data, a.latest);
+    scope.data = {};
+    scope.latest = {};
+    scope.update = function() {
+        scope.data = jQuery.extend(scope.data, scope.latest);
     };
-    a.get = function(b) {
-        var c = localStorage.getItem(a.STORAGE_KEY), d = c && c[0] ? JSON.parse(c) : [];
-        if (b !== undefined && d[b]) {
-            d = [ d[b] ];
+    scope.get = function(index) {
+        var cachedTickets = localStorage.getItem(scope.STORAGE_KEY), result = cachedTickets && cachedTickets[0] ? JSON.parse(cachedTickets) : [];
+        if (index !== undefined && result[index]) {
+            result = [ result[index] ];
         }
-        return d;
+        return result;
     };
-    a.add = function(b) {
-        if (!b) {
+    scope.add = function(map) {
+        if (!map) {
             return;
         }
-        var c = a.get(), d = c.concat([ b ]);
-        localStorage.setItem(a.STORAGE_KEY, JSON.stringify(d));
+        var cachedTickets = scope.get(), tickets = cachedTickets.concat([ map ]);
+        localStorage.setItem(scope.STORAGE_KEY, JSON.stringify(tickets));
     };
-    a.remove = function(b) {
-        if (b !== undefined) {
-            var c = a.get();
-            if (c[0]) {
-                c.splice(b, 1);
-                localStorage.setItem(a.STORAGE_KEY, JSON.stringify(c));
+    scope.remove = function(index) {
+        if (index !== undefined) {
+            var cachedTickets = scope.get();
+            if (cachedTickets[0]) {
+                cachedTickets.splice(index, 1);
+                localStorage.setItem(scope.STORAGE_KEY, JSON.stringify(cachedTickets));
             }
         } else {
-            localStorage.removeItem(a.STORAGE_KEY);
+            localStorage.removeItem(scope.STORAGE_KEY);
         }
-        return a.get();
+        return scope.get();
     };
-    a.getCollaborators = function(b) {
-        var c = a.get(b)[0];
-        return c && c.collaborators || a.default.collaborators;
+    scope.getCollaborators = function(index) {
+        var ticket = scope.get(index)[0];
+        return ticket && ticket.collaborators || scope.default.collaborators;
     };
-    a.updateCollaborators = function(b, c) {
-        var d = a.get(), e = d[b];
-        c = c || "";
-        if (e) {
-            d[b] = a._updateProperty(e, "collaborators", c);
-            localStorage.setItem(a.STORAGE_KEY, JSON.stringify(d));
+    scope.updateCollaborators = function(index, names) {
+        var tickets = scope.get(), ticket = tickets[index];
+        names = names || "";
+        if (ticket) {
+            tickets[index] = scope._updateProperty(ticket, "collaborators", names);
+            localStorage.setItem(scope.STORAGE_KEY, JSON.stringify(tickets));
         } else {
-            a.default.collaborators = c;
-            localStorage.setItem(a.DEFAULT_COLLABORATOR_KEY, c);
-            a._updateProperty(a.latest, "collaborators", c);
+            scope.default.collaborators = names;
+            localStorage.setItem(scope.DEFAULT_COLLABORATOR_KEY, names);
+            scope._updateProperty(scope.latest, "collaborators", names);
         }
-        a.update();
+        scope.update();
     };
-    a._updateProperty = function(a, b, c) {
-        if (a[b] !== undefined) {
-            a[b] = c;
+    scope._updateProperty = function(ticket, key, value) {
+        if (ticket[key] !== undefined) {
+            ticket[key] = value;
         }
-        return a;
+        return ticket;
     };
 };
 
 Namespace.create("xing.jira");
 
-xing.jira.Application = function(a, b) {
+xing.jira.Application = function(cssResources, options) {
     "use strict";
-    var c = this, d = xing.core, e, f, g, h, i;
-    c.initialze = function(a, b) {
-        c.layoutName = b && b.layoutName || "";
-        e = new d.Observer();
-        f = new d.TicketCache();
-        i = new d.table.Builder();
-        h = new d.Markup();
-        g = new d.I18n().local();
-        c.tableMap = new d.table.Map(new xing.jira.TableMapCell(), g, c.layoutName);
-        c.addStyle(a);
-        c.collectDataFromDom();
+    var scope = this, nsXC = xing.core, observer, ticketCache, local, markup, tableBuilder;
+    scope.initialze = function(cssResources, options) {
+        scope.layoutName = options && options.layoutName || "";
+        observer = new nsXC.Observer();
+        ticketCache = new nsXC.TicketCache();
+        tableBuilder = new nsXC.table.Builder();
+        markup = new nsXC.Markup();
+        local = new nsXC.I18n().local();
+        scope.tableMap = new nsXC.table.Map(new xing.jira.TableMapCell(), local, scope.layoutName);
+        scope.addStyle(cssResources);
+        scope.collectDataFromDom();
     };
-    c._getContainer = function(a) {
-        return a.hasClass("gm-container") && a || a.parents(".gm-container");
+    scope._getContainer = function($el) {
+        return $el.hasClass("gm-container") && $el || $el.parents(".gm-container");
     };
-    c._clickOutsidePopupHandler = function(a) {
-        var b = jQuery(a.target), d = c._getContainer(b);
-        if (!d[0]) {
-            c._hidePopup();
+    scope._clickOutsidePopupHandler = function(event) {
+        var $target = jQuery(event.target), $container = scope._getContainer($target);
+        if (!$container[0]) {
+            scope._hidePopup();
         }
     };
-    c._hidePopup = function() {
+    scope._hidePopup = function() {
         jQuery("#gm-popup").remove();
-        jQuery(document).off("click", c._clickOutsidePopupHandler);
+        jQuery(document).off("click", scope._clickOutsidePopupHandler);
     };
-    c._updateHTML = function(a) {
+    scope._updateHTML = function(cachedTicketMaps) {
         jQuery("#gm-popup").remove();
-        var b = c.tableMap.build(f.latest), d = {
-            layoutName: c.layoutName
-        }, e = i.render(b, d), j = "", k = a.length + 1, l = Math.ceil(k / 2);
-        a.forEach(function(a) {
-            var e = a.number, f = b.number;
-            if (e !== f) {
-                j += "" + '<li class="gm-output-item">' + i.render(c.tableMap.build(a), d) + h.ticketPanel(g.modal.action.remove) + "</li>";
+        var map = scope.tableMap.build(ticketCache.latest), builderRenderOptions = {
+            layoutName: scope.layoutName
+        }, currentTicketMarkup = tableBuilder.render(map, builderRenderOptions), cachedTicketsMarkup = "", numberOfTickets = cachedTicketMaps.length + 1, numberOfPages = Math.ceil(numberOfTickets / 2);
+        cachedTicketMaps.forEach(function(cachedTicketMap) {
+            var number = cachedTicketMap.number, currentNumber = map.number;
+            if (number !== currentNumber) {
+                cachedTicketsMarkup += "" + '<li class="gm-output-item">' + tableBuilder.render(scope.tableMap.build(cachedTicketMap), builderRenderOptions) + markup.ticketPanel(local.modal.action.remove) + "</li>";
             }
         });
-        jQuery("body").append(jQuery('<div id="gm-popup">' + '<section class="gm-container jira-dialog box-shadow">' + h.dialogHeader(g.modal.heading) + '<div class="jira-dialog-content">' + h.pageCounter(g.modal.ticketCount, k, g.modal.pageCount, l) + h.ticketPreview(j, e) + "</div>" + h.dialogFooter(g.modal.select, g.modal.action.print, g.modal.action.cancel) + "</section>" + '<div class="aui-blanket gm-print-hidden"></div>' + "</div>"));
+        jQuery("body").append(jQuery('<div id="gm-popup">' + '<section class="gm-container jira-dialog box-shadow">' + markup.dialogHeader(local.modal.heading) + '<div class="jira-dialog-content">' + markup.pageCounter(local.modal.ticketCount, numberOfTickets, local.modal.pageCount, numberOfPages) + markup.ticketPreview(cachedTicketsMarkup, currentTicketMarkup) + "</div>" + markup.dialogFooter(local.modal.select, local.modal.action.print, local.modal.action.cancel) + "</section>" + '<div class="aui-blanket gm-print-hidden"></div>' + "</div>"));
     };
-    c.addStyle = function(a) {
-        if (jQuery("#gm-style")[0] || !a) {
+    scope.addStyle = function(resources) {
+        if (jQuery("#gm-style")[0] || !resources) {
             return;
         }
-        var b = jQuery('<style id="gm-style" type="text/css"></style>');
-        jQuery(document.head).append(b.html(a));
+        var $style = jQuery('<style id="gm-style" type="text/css"></style>');
+        jQuery(document.head).append($style.html(resources));
     };
-    c.cacheTicketHandler = function() {
-        c.update();
-        var a = f.latest;
-        f.add(a);
-        c._hidePopup();
-        c._showSuccessMessage();
+    scope.cacheTicketHandler = function() {
+        scope.update();
+        var map = ticketCache.latest;
+        ticketCache.add(map);
+        scope._hidePopup();
+        scope._showSuccessMessage();
     };
-    c._showSuccessMessage = function() {
+    scope._showSuccessMessage = function() {
         jQuery(".aui-message").remove();
         if (window.AJS) {
             AJS.messages.success(".aui-page-header-inner", {
-                title: g.messages.ticketCached.title,
-                body: g.messages.ticketCached.body
+                title: local.messages.ticketCached.title,
+                body: local.messages.ticketCached.body
             });
         }
         setTimeout(function() {
             jQuery(".aui-message").remove();
         }, 5e3);
     };
-    c.showPopup = function() {
+    scope.showPopup = function() {
         if (jQuery("#gm-popup")[0]) {
             return;
         }
-        e.subscribe(this);
-        e.subscribe(f);
-        c.update(f.get());
-        jQuery("body").on("click", ".js-gm-print-action", function(a) {
-            a.preventDefault();
+        observer.subscribe(this);
+        observer.subscribe(ticketCache);
+        scope.update(ticketCache.get());
+        jQuery("body").on("click", ".js-gm-print-action", function(event) {
+            event.preventDefault();
             window.print();
-            f.remove();
-            c._hidePopup();
-        }).on("click", ".js-gm-pick-more", function(a) {
-            a.preventDefault();
-            c.cacheTicketHandler();
-        }).on("click", ".js-gm-cancel-action", function(a) {
-            a.preventDefault();
-            c._hidePopup();
-        }).on("click", ".js-gm-remove-ticket", function(a) {
-            a.preventDefault();
-            var b = jQuery(a.target).parents("li"), d = b.index(b);
-            f.remove(d);
-            jQuery("#gm-popup .form-body table").eq(d).remove();
-            c.update(f.get());
+            ticketCache.remove();
+            scope._hidePopup();
+        }).on("click", ".js-gm-pick-more", function(event) {
+            event.preventDefault();
+            scope.cacheTicketHandler();
+        }).on("click", ".js-gm-cancel-action", function(event) {
+            event.preventDefault();
+            scope._hidePopup();
+        }).on("click", ".js-gm-remove-ticket", function(event) {
+            event.preventDefault();
+            var $target = jQuery(event.target).parents("li"), index = $target.index($target);
+            ticketCache.remove(index);
+            jQuery("#gm-popup .form-body table").eq(index).remove();
+            scope.update(ticketCache.get());
         }).on("click", ".gm-change-collaborators", function() {
-            var a = jQuery(".gm-output-list button").index(this) - 1, b, d;
+            var index = jQuery(".gm-output-list button").index(this) - 1, names, confirmedNames;
             if (jQuery(this).parents(".is-current")) {
-                b = f.getCollaborators();
+                names = ticketCache.getCollaborators();
             } else {
-                b = f.getCollaborators(a);
+                names = ticketCache.getCollaborators(index);
             }
-            d = window.prompt(g.modal.collaboratorPrompt, b || "");
-            if (d !== null) {
-                f.updateCollaborators(a, d.trimWhitespace());
-                c.update();
+            confirmedNames = window.prompt(local.modal.collaboratorPrompt, names || "");
+            if (confirmedNames !== null) {
+                ticketCache.updateCollaborators(index, confirmedNames.trimWhitespace());
+                scope.update();
             }
         });
     };
-    c.update = function() {
-        c._updateHTML(f.get());
+    scope.update = function() {
+        scope._updateHTML(ticketCache.get());
     };
-    c.collectDataFromDom = function() {
-        var a = jQuery("#greenhopper-agile-issue-web-panel dd a"), b = new d.Presenter(), c = b.getString(jQuery("#type-val img").attr("alt"));
-        f.latest = {
-            number: b.getString(jQuery("#key-val").text()),
-            description: b.getString(jQuery("#description-val").html()),
-            storyPoints: b.getString(jQuery("#customfield_12470-val").text()),
-            dueDate: b.getDate(jQuery("#due-date time").attr("datetime")),
-            collaborators: f.getCollaborators(),
-            type: c,
-            typeSelector: b.dashalizer(c),
-            reporter: b.getString($("#reporter-val span").text()),
-            created: b.getDate($("#summary-val").text()),
-            component: b.getString($("#components-field").text()),
-            target: b.getElementText(a)
+    scope.collectDataFromDom = function() {
+        var $target = jQuery("#greenhopper-agile-issue-web-panel dd a"), presenter = new nsXC.Presenter(), type = presenter.getString(jQuery("#type-val img").attr("alt"));
+        ticketCache.latest = {
+            number: presenter.getString(jQuery("#key-val").text()),
+            description: presenter.getString(jQuery("#description-val").html()),
+            storyPoints: presenter.getString(jQuery("#customfield_12470-val").text()),
+            dueDate: presenter.getDate(jQuery("#due-date time").attr("datetime")),
+            collaborators: ticketCache.getCollaborators(),
+            type: type,
+            typeSelector: presenter.dashalizer(type),
+            reporter: presenter.getString($("#reporter-val span").text()),
+            created: presenter.getDate($("#summary-val").text()),
+            component: presenter.getString($("#components-field").text()),
+            target: presenter.getElementText($target)
         };
-        e.update();
+        observer.update();
     };
-    c.initialze(a, b);
+    scope.initialze(cssResources, options);
 };
 
 Namespace.create("xing.jira.helpers");
 
 xing.jira.helpers.Label = function() {
     "use strict";
-    var a = this;
-    a.NAMESPACE = "aui-lozenge";
-    a.DEFAULT_LABEL_SELECTORS = "aui-lozenge aui-lozenge-subtle";
-    a.DEFAULT_TYPES = {
+    var scope = this;
+    scope.NAMESPACE = "aui-lozenge";
+    scope.DEFAULT_LABEL_SELECTORS = "aui-lozenge aui-lozenge-subtle";
+    scope.DEFAULT_TYPES = {
         bug: "error",
         improvement: "success",
         "new-feature": "complete",
         task: "moved"
     };
-    a.AGILE_TYPES = {
+    scope.AGILE_TYPES = {
         "user-story": "success",
         "technical-story": "success",
         "highlevel-testcase": "current",
         "portability-testcase": "current"
     };
-    a.getSelector = function(b) {
-        var c;
-        if (b === false) {
+    scope.getSelector = function(type) {
+        var result;
+        if (type === false) {
             return "";
         }
-        c = a._filter(b, a.DEFAULT_TYPES);
-        c += a._filter(b, a.AGILE_TYPES);
-        return a.DEFAULT_LABEL_SELECTORS + (c ? " " + c : "");
+        result = scope._filter(type, scope.DEFAULT_TYPES);
+        result += scope._filter(type, scope.AGILE_TYPES);
+        return scope.DEFAULT_LABEL_SELECTORS + (result ? " " + result : "");
     };
-    a._filter = function(b, c) {
-        var d = "";
-        Object.keys(c).forEach(function(e) {
-            if (b === e) {
-                d = a.NAMESPACE + "-" + c[e];
+    scope._filter = function(type, typeMap) {
+        var result = "";
+        Object.keys(typeMap).forEach(function(key) {
+            if (type === key) {
+                result = scope.NAMESPACE + "-" + typeMap[key];
             }
         });
-        return d;
+        return result;
     };
 };
 
@@ -566,189 +566,189 @@ Namespace.create("xing.jira");
 
 xing.jira.TableMapCell = function() {
     "use strict";
-    var a = this, b = 5;
-    a.labelHelper = new xing.jira.helpers.Label();
-    a.PREFIX = "gm-jira-";
-    a._titleBody = function(b, c) {
+    var scope = this, MAX_COLS = 5;
+    scope.labelHelper = new xing.jira.helpers.Label();
+    scope.PREFIX = "gm-jira-";
+    scope._titleBody = function(options, item) {
         return {
             cell: {
                 options: {
-                    cssClass: a.PREFIX + c
+                    cssClass: scope.PREFIX + item
                 },
                 title: {
-                    text: b.local[c].title
+                    text: options.local[item].title
                 },
                 body: {
-                    text: b.data[c]
+                    text: options.data[item]
                 }
             }
         };
     };
-    a.number = function(b) {
+    scope.number = function(options) {
         return {
             head: true,
             cell: {
                 options: {
                     colspan: 2,
-                    cssClass: a.PREFIX + "number"
+                    cssClass: scope.PREFIX + "number"
                 },
                 body: {
-                    text: b.data.number,
+                    text: options.data.number,
                     options: {
-                        title: b.data.number
+                        title: options.data.number
                     }
                 }
             }
         };
     };
-    a.type = function(b) {
+    scope.type = function(options) {
         return {
             cell: {
                 options: {
-                    cssClass: a.PREFIX + "type"
+                    cssClass: scope.PREFIX + "type"
                 },
                 title: {
-                    text: b.local.type.title
+                    text: options.local.type.title
                 },
                 body: {
                     options: {
-                        cssClass: a.labelHelper.getSelector(b.data.typeSelector)
+                        cssClass: scope.labelHelper.getSelector(options.data.typeSelector)
                     },
-                    text: b.data.type
+                    text: options.data.type
                 }
             }
         };
     };
-    a.description = function(c) {
+    scope.description = function(options) {
         return {
             head: true,
             cell: {
                 options: {
-                    colspan: b,
-                    cssClass: a.PREFIX + "description"
+                    colspan: MAX_COLS,
+                    cssClass: scope.PREFIX + "description"
                 },
                 body: {
-                    text: c.data.description
+                    text: options.data.description
                 }
             }
         };
     };
-    a.component = function(b) {
-        return a._titleBody(b, "component");
+    scope.component = function(options) {
+        return scope._titleBody(options, "component");
     };
-    a.target = function(b) {
-        return a._titleBody(b, "target");
+    scope.target = function(options) {
+        return scope._titleBody(options, "target");
     };
-    a.title = function(c) {
+    scope.title = function(options) {
         return {
             head: true,
             cell: {
                 options: {
-                    colspan: b,
-                    cssClass: a.PREFIX + "title"
+                    colspan: MAX_COLS,
+                    cssClass: scope.PREFIX + "title"
                 },
                 body: {
-                    text: c.data.title
+                    text: options.data.title
                 }
             }
         };
     };
-    a.collobarators = function(c) {
+    scope.collobarators = function(options) {
         return {
             cell: {
                 options: {
-                    colspan: b,
-                    cssClass: a.PREFIX + "pairing"
+                    colspan: MAX_COLS,
+                    cssClass: scope.PREFIX + "pairing"
                 },
                 title: {
-                    text: c.local.collaborator.title
+                    text: options.local.collaborator.title
                 },
                 body: {
-                    text: c.data.collaborators.split(/,/).join(" ") + c.local.collaborator.action
+                    text: options.data.collaborators.split(/,/).join(" ") + options.local.collaborator.action
                 }
             }
         };
     };
-    a.created = function(b) {
-        var c = "created";
+    scope.created = function(options) {
+        var item = "created";
         return {
             cell: {
                 options: {
-                    cssClass: a.PREFIX + c
+                    cssClass: scope.PREFIX + item
                 },
                 title: {
-                    text: b.local[c].title
+                    text: options.local[item].title
                 },
                 body: {
                     options: {
-                        cssClass: a.labelHelper.getSelector()
+                        cssClass: scope.labelHelper.getSelector()
                     },
-                    text: b.data[c]
+                    text: options.data[item]
                 }
             }
         };
     };
-    a.dueDate = function(b) {
+    scope.dueDate = function(options) {
         return {
             cell: {
                 title: {
-                    text: b.local.dueDate.title
+                    text: options.local.dueDate.title
                 },
                 body: {
                     options: {
-                        cssClass: a.labelHelper.getSelector(b.data.dueDate ? "bug" : false)
+                        cssClass: scope.labelHelper.getSelector(options.data.dueDate ? "bug" : false)
                     },
-                    text: b.data.dueDate
+                    text: options.data.dueDate
                 }
             }
         };
     };
-    a.reporter = function(b) {
-        return a._titleBody(b, "reporter");
+    scope.reporter = function(options) {
+        return scope._titleBody(options, "reporter");
     };
-    a.storyPoints = function(b) {
+    scope.storyPoints = function(options) {
         return {
             cell: {
                 options: {
-                    cssClass: a.PREFIX + "story"
+                    cssClass: scope.PREFIX + "story"
                 },
                 title: {
-                    text: b.local.storyPoints.title
+                    text: options.local.storyPoints.title
                 },
                 body: {
-                    text: b.data.storyPoints
+                    text: options.data.storyPoints
                 }
             }
         };
     };
-    a.start = function(a) {
+    scope.start = function(options) {
         return {
             cell: {
                 options: {
                     cssClass: "gm-date-content"
                 },
                 title: {
-                    text: a.local.start.title
+                    text: options.local.start.title
                 },
                 body: {
-                    text: a.local.start.body
+                    text: options.local.start.body
                 }
             }
         };
     };
-    a.closed = function(a) {
+    scope.closed = function(options) {
         return {
             cell: {
                 options: {
                     cssClass: "gm-date-content"
                 },
                 title: {
-                    text: a.local.closed.title
+                    text: options.local.closed.title
                 },
                 body: {
-                    text: a.local.closed.body
+                    text: options.local.closed.body
                 }
             }
         };
     };
-};var xingJiraApp = new xing.jira.Application("");xingJiraApp.versionTimestamp="2014-10-09 5:49:12 PM";xingJiraApp.version="2.2.2";xingJiraApp.cacheTicketHandler();})(window.jQuery);
+};var xingJiraApp = new xing.jira.Application("");xingJiraApp.versionTimestamp="2014-10-09 5:57:42 PM";xingJiraApp.version="2.2.2";xingJiraApp.cacheTicketHandler();})(window.jQuery);

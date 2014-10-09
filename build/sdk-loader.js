@@ -1,10 +1,10 @@
-javascript:(function(options){(function(a) {
+javascript:(function(options){(function(options) {
     "use strict";
-    a = a || {};
-    a.kit = a.kit || 0;
-    a.env = a.env || 0;
-    a.path = a.path || "//cdn.rawgit.com/gastonsalg/jira-bookmarklets/";
-    var b = document, c = b.createElement("script"), d = [ "master", "develop" ], e = [ "ticket-print", "add-ticket", "ticket-print-lay-scrum", "add-ticket-lay-scrum" ], f = d[a.env], g = e[a.kit], h = a.path + f + "/build/" + g + "-bookmarklet.js";
-    c.setAttribute("src", h);
-    b.head.appendChild(c);
+    options = options || {};
+    options.kit = options.kit || 0;
+    options.env = options.env || 0;
+    options.path = options.path || "//rawgit.com/gastonsalg/jira-bookmarklets/";
+    var doc = document, scriptTag = doc.createElement("script"), environments = [ "master", "develop" ], kits = [ "ticket-print", "add-ticket", "ticket-print-lay-scrum", "add-ticket-lay-scrum" ], environment = environments[options.env], kit = kits[options.kit], url = options.path + environment + "/build/" + kit + "-bookmarklet.js";
+    scriptTag.setAttribute("src", url);
+    doc.head.appendChild(scriptTag);
 })(options);}());
