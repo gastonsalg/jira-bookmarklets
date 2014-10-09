@@ -306,6 +306,7 @@ xing.core.table.Map = function(tableCell, local, layoutName) {
             });
         } else if (xing.core.helpers.isObject(mapItem)) {
             var mapItemName = Object.keys(mapItem)[0];
+            console.log(mapItem[mapItemName].maxLength);
             if (mapItem[mapItemName].maxLength) {
                 data[mapItemName] = data[mapItemName].truncate(mapItem[mapItemName].maxLength);
             }
@@ -751,4 +752,4 @@ xing.jira.TableMapCell = function() {
             }
         };
     };
-};var xingJiraApp = new xing.jira.Application(, { layoutName: xing.core.table.layout.SCRUM_LAYOUT });xingJiraApp.versionTimestamp="2014-10-09 6:25:35 PM";xingJiraApp.version="2.2.2";xingJiraApp.cacheTicketHandler();}(jQuery));
+};var xingJiraApp = new xing.jira.Application(, { layoutName: xing.core.table.layout.SCRUM_LAYOUT });xingJiraApp.versionTimestamp="2014-10-09 6:32:01 PM";xingJiraApp.version="2.2.2";xingJiraApp.cacheTicketHandler();}(jQuery));
